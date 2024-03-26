@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  api:
+    container_name: api
+    build: ./api
+    ports:
+      - 8080:8080
+    # bashは何もインプットするものがないとすぐにプロセスを終了してしまう。だから普段runする際も-itをつけることで、標準入力を入力することでbashが閉じるのを防いでいる
+    tty: true #これは-itのtの部分
+    volumes:
+      # バインドマウント　./apiディレクトリとコンテナの/workspaceディレクトリを同期している
+      # 以前絶対パスしか使えないと話したが、dockercomposeの場合は相対パスを使える
+      # cachedはボリュームのマウントをする際に用いるオプション　コンテナ側とソフト側のデータの同期が多少犠牲にはなるが、データの多少の読み込み書き込みが早くなる　今回の場合は頻繁にapiにアクセスするわけではないのでつける
+      # 今回はローカル開発のためのファイルだからいいが、実際の製品としてサーバーにデプロイする際は他のオプションも検討する
+      - ./api:/workspace:cached
+
+  web:
+    container_name: web
+    build: ./web
+    ports:
+      - 3000:3000
+    tty: true
+    volumes:
+      - ./web:/workspace:cached
+    # こっちはフロントエンドだから、バックエンドがないと意味をなさないので、先にバックエンドを動かす
+    depends_on:
+      - api

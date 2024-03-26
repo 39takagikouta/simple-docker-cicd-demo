@@ -1,0 +1,19 @@
+docker compose psでdocker composeで起動されたコンテナのステータスを見ることができる
+docker container lsと変わらない
+
+手順
+
+docker compose exec api bash
+
+cd /workspace
+./gradlew bootRun
+
+docker compose exec api bash
+
+cd /workspace
+npm install 
+npm run start
+
+loalhost:8080/api/hello
+→文字列が出るはず
+
